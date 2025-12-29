@@ -20,7 +20,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Get Started",
-      items: ["get-started/index"],
+      items: ["get-started/index", "get-started/deployment"],
     },
     {
       type: "category",
