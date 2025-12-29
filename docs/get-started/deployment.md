@@ -49,6 +49,8 @@ services:
     image: ghcr.io/identivia/admin-portal:latest
     container_name: admin-portal
     restart: unless-stopped
+    ports:
+      - "3000:80"
     environment:
       - VITE_POCKETBASE_URL=https://pocketbase.example.com
     depends_on:
@@ -58,6 +60,8 @@ services:
     image: ghcr.io/identivia/web-app:latest
     container_name: web-app
     restart: unless-stopped
+    ports:
+      - "3001:80"
     environment:
       - VITE_POCKETBASE_URL=https://pocketbase.example.com
       - VITE_API_URL=https://api.example.com
@@ -69,6 +73,8 @@ services:
     image: ghcr.io/identivia/backend-api:latest
     container_name: backend-api
     restart: unless-stopped
+    ports:
+      - "8000:8000"
     environment:
       - POCKETBASE_URL=http://pocketbase:8090
       - API_KEY=${API_KEY}
