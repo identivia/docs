@@ -16,8 +16,6 @@ Deploying the Identivia stack using Docker Compose is straightforward. This guid
 Create a `docker-compose.yml` file with the following content:
 
 ```yaml
-version: "3.8"
-
 services:
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
