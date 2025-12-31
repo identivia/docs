@@ -63,8 +63,9 @@ services:
     ports:
       - "3001:80"
     environment:
-      - VITE_POCKETBASE_URL=https://pocketbase.example.com
-      - VITE_API_URL=https://api.example.com
+      - VITE_FINGERPRINT_PUBLIC_KEY=your-public-key
+      - VITE_KYC_API_BASE_URL=https://api.example.com
+      - VITE_DEMO_SITE_URL=https://demo.example.com
     depends_on:
       - pocketbase
       - backend-api
