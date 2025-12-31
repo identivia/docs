@@ -113,3 +113,41 @@ Check the logs to ensure everything started correctly:
 ```bash
 docker-compose logs -f
 ```
+
+## Configuring Nginx Proxy Manager
+
+After the stack is running, you need to configure Nginx Proxy Manager to route traffic to the correct services.
+
+1.  **Access the Admin Interface**: Open your browser and navigate to `http://localhost:81`.
+2.  **Login**: Use the default credentials:
+    *   **Email**: `admin@example.com`
+    *   **Password**: `changeme`
+    *   *Note: You will be prompted to change these details after your first login.*
+3.  **Add Proxy Hosts**: Go to the "Proxy Hosts" tab and click "Add Proxy Host".
+
+### 1. Configure PocketBase
+
+*   **Domain Names**: `pocketbase.example.com` (or your local domain)
+*   **Scheme**: `http`
+*   **Forward Hostname / IP**: `pocketbase`
+*   **Forward Port**: `8090`
+*   **Websockets Support**: Enable this option (Required for PocketBase realtime subscriptions).
+*   **Block Common Exploits**: Enable this option.
+
+### 2. Configure Admin Portal
+
+*   **Domain Names**: `admin.example.com` (or your local domain)
+*   **Scheme**: `http`
+*   **Forward Hostname / IP**: `admin-portal`
+*   **Forward Port**: `80`
+*   **Block Common Exploits**: Enable this option.
+
+### 3. Configure Web App
+
+*   **Domain Names**: `app.example.com` (or your local domain)
+*   **Scheme**: `http`
+*   **Forward Hostname / IP**: `web-app`
+*   **Forward Port**: `80`
+*   **Block Common Exploits**: Enable this option.
+
+> **Note**: Replace `.example.com` domains with your actual domain names or local hosts mapped in your `/etc/hosts` file.
