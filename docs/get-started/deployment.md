@@ -30,16 +30,16 @@ services:
       - ./letsencrypt:/etc/letsencrypt
 
   pocketbase:
-    image: pocketbase/pocketbase:latest
+    image: ghcr.io/muchobien/pocketbase
     container_name: pocketbase
     restart: unless-stopped
-    command: 
+    command:
       - --encryptionEnv
       - PB_ENCRYPTION_KEY
     environment:
       PB_ENCRYPTION_KEY: ${PB_ENCRYPTION_KEY}
     volumes:
-      - ./pb_data:/pb/pb_data
+      - ./pb_data:/pb_data
     ports:
       - "8090:8090"
 
@@ -50,7 +50,7 @@ services:
     ports:
       - "3000:80"
     environment:
-      - VITE_POCKETBASE_URL=https://pocketbase.example.com
+      - POCKETBASE_URL=https://pocketbase.identivia.com
     depends_on:
       - pocketbase
 
@@ -61,9 +61,10 @@ services:
     ports:
       - "3001:80"
     environment:
-      - VITE_FINGERPRINT_PUBLIC_KEY=your-public-key
-      - VITE_KYC_API_BASE_URL=https://api.example.com
-      - VITE_DEMO_SITE_URL=https://demo.example.com
+      - VITE_FINGERPRINT_PUBLIC_KEY=XXXX
+      - VITE_BACKEND_API_URL=https://api.identivia.com
+      - VITE_DEMO_SITE_URL=https://demo.identivia.com
+      - VITE_DOMAIN_URL=identivia.com
     depends_on:
       - pocketbase
       - backend-api
@@ -75,8 +76,18 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - POCKETBASE_URL=http://pocketbase:8090
+      - POCKETBASE_URL=http://172.31.37.205:8090
       - API_KEY=${API_KEY}
+      - PB_USER_EMAIL=likweitan@gmail.com
+      - PB_USER_PASSWORD=test1234
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=XXXX
+      - AWS_SECRET_ACCESS_KEY=XXXX
+      - FACE_LIVENESS_THRESHOLD=75
+      - OPENAI_MODEL=o4-mini
+      - OPENAI_API_KEY=XXXX
+      - FINGERPRINT_SECRET_KEY=XXXX
+      - CLIENT_URL=https://identivia.com
     depends_on:
       - pocketbase
 ```
@@ -115,6 +126,8 @@ docker-compose logs -f
 ## Configuring Nginx Proxy Manager
 
 After the stack is running, you need to configure Nginx Proxy Manager to route traffic to the correct services.
+
+![Nginx Proxy Manager Screenshot](/img/nginx-proxy-manager.png)
 
 1.  **Access the Admin Interface**: Open your browser and navigate to `http://localhost:81`.
 2.  **Login**: Use the default credentials:
