@@ -89,7 +89,7 @@ const config: Config = {
         },
         { to: '/blog', label: 'Change Log', position: 'left' },
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/identivia',
           label: 'GitHub',
           position: 'right',
         },
@@ -112,15 +112,15 @@ const config: Config = {
           items: [
             {
               label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              href: 'https://stackoverflow.com/questions/tagged/identivia',
             },
             {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              href: 'https://discordapp.com/invite/identivia',
             },
             {
               label: 'X',
-              href: 'https://x.com/docusaurus',
+              href: 'https://x.com/identivia',
             },
           ],
         },
@@ -133,12 +133,12 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/identivia',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Ivis, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Identivia. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
