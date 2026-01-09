@@ -109,7 +109,27 @@ API_KEY=your_secret_api_key
 - **Web App**: The main user-facing application.
 - **Backend API**: Internal API service for handling business logic.
 
+## Authenticating to the Container registry
+
+:::note
+
+GitHub Packages only supports authentication using a personal access token (classic). For more information, see [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+:::
+
+You need an access token to publish, install, and delete private, internal, and public packages.
+
+You can use a personal access token (classic) to authenticate to GitHub Packages or the GitHub API. When you create a personal access token (classic), you can assign the token different scopes depending on your needs. For more information about packages-related scopes for a personal access token (classic), see [About permissions for GitHub Packages](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages).
+
+To authenticate to a GitHub Packages registry within a GitHub Actions workflow, you can use:
+
+*   `GITHUB_TOKEN` to publish packages associated with the workflow repository.
+*   A personal access token (classic) with at least `read:packages` scope to install packages associated with other private repositories (`GITHUB_TOKEN` can be used if the repository is granted read access to the package. See [Configuring a package's access control and visibility](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)).
+
+For more information, see [Authenticating to the Container registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry).
+
 ## Running the Stack
+
 
 To start all services, run:
 
