@@ -1,47 +1,34 @@
 ---
 sidebar_position: 1
+title: Introduction
+id: intro
 ---
 
-# Tutorial Intros
+# Introduction to KYCsecure
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to the **KYCsecure** documentation!
+
+**KYCsecure** is a developer-friendly tool designed to simplify **Know Your Customer (KYC)** identity verification. It provides a seamless bridge between your application and our robust verification backend.
+
+## Why KYCsecure?
+
+Integrating compliance workflows often requires building complex infrastructure for document handling, security, and manual review processes. KYCsecure solves this by offering:
+
+- **Instant Onboarding**: Trigger KYC verification flows with a simple API call.
+- **Hosted Verification UI**: Redirect users to a secure, pre-built experience for document upload and liveness checks.
+- **Unified Status Tracking**: Poll a single endpoint to track verification progress from "started" to "approved" or "rejected".
+- **Secure Storage**: All sensitive identity artifacts are securely stored and audit-ready in our backend (PocketBase).
+
+## Key Features
+
+- **Simple Integration**: Uses standard REST APIs and API keys for authentication.
+- **Separation of Concerns**: Your app handles the user journey; we handle the compliance complexity.
+- **Developer First**: Built with clear documentation, predictable error handling, and local development support.
 
 ## Getting Started
 
-Get started by **creating a new site**.
+Ready to integrate?
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
-
-### What you'll need
-
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+1. **[Concept Overview](./concept.md)**: Understand the architecture and data flows.
+2. **[Getting Started](./getting-started.md)**: Follow our quickstart guide to create your first profile and trigger a verification flow.
+3. **[API Reference](/api)**: Explore the detailed API endpoints and data models.
