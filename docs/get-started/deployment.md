@@ -57,7 +57,7 @@ services:
     ports:
       - "3000:80"
     environment:
-      - POCKETBASE_URL=https://pocketbase.identivia.com
+      - POCKETBASE_URL=${POCKETBASE_PUBLIC_URL}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -69,10 +69,10 @@ services:
     ports:
       - "3001:80"
     environment:
-      - VITE_FINGERPRINT_PUBLIC_KEY=XXXX
-      - VITE_BACKEND_API_URL=https://api.identivia.com
-      - VITE_DEMO_SITE_URL=https://demo.identivia.com
-      - VITE_DOMAIN_URL=identivia.com
+      - VITE_FINGERPRINT_PUBLIC_KEY=${VITE_FINGERPRINT_PUBLIC_KEY}
+      - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
+      - VITE_DEMO_SITE_URL=${VITE_DEMO_SITE_URL}
+      - VITE_DOMAIN_URL=${VITE_DOMAIN_URL}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -86,18 +86,18 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - POCKETBASE_URL=http://172.31.37.205:8090
+      - POCKETBASE_URL=${POCKETBASE_INTERNAL_URL}
       - API_KEY=${API_KEY}
       - PB_USER_EMAIL=${POCKETBASE_ADMIN_EMAIL}
       - PB_USER_PASSWORD=${POCKETBASE_ADMIN_PASSWORD}
-      - AWS_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=XXXX
-      - AWS_SECRET_ACCESS_KEY=XXXX
-      - FACE_LIVENESS_THRESHOLD=75
-      - OPENAI_MODEL=o4-mini
-      - OPENAI_API_KEY=XXXX
-      - FINGERPRINT_SECRET_KEY=XXXX
-      - CLIENT_URL=https://identivia.com
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - FACE_LIVENESS_THRESHOLD=${FACE_LIVENESS_THRESHOLD}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - FINGERPRINT_SECRET_KEY=${FINGERPRINT_SECRET_KEY}
+      - CLIENT_URL=${CLIENT_URL}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -108,8 +108,31 @@ services:
 Create a `.env` file in the same directory as your `docker-compose.yml` and add your environment variables:
 
 ```bash
+# PocketBase
 PB_ENCRYPTION_KEY=your_secret_encryption_key
+POCKETBASE_ADMIN_EMAIL=admin@example.com
+POCKETBASE_ADMIN_PASSWORD=changeme
+
+# Admin Portal
+POCKETBASE_PUBLIC_URL=https://pocketbase.identivia.com
+
+# Web App
+VITE_FINGERPRINT_PUBLIC_KEY=your_fingerprint_public_key
+VITE_BACKEND_API_URL=https://api.identivia.com
+VITE_DEMO_SITE_URL=https://demo.identivia.com
+VITE_DOMAIN_URL=identivia.com
+
+# Backend API
+POCKETBASE_INTERNAL_URL=http://172.31.37.205:8090
 API_KEY=your_secret_api_key
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+FACE_LIVENESS_THRESHOLD=75
+OPENAI_MODEL=o4-mini
+OPENAI_API_KEY=your_openai_api_key
+FINGERPRINT_SECRET_KEY=your_fingerprint_secret_key
+CLIENT_URL=https://identivia.com
 ```
 
 ### Service Details
