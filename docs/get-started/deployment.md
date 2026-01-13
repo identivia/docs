@@ -37,7 +37,9 @@ services:
       - --encryptionEnv
       - PB_ENCRYPTION_KEY
     environment:
-      PB_ENCRYPTION_KEY: ${PB_ENCRYPTION_KEY}
+      - PB_ENCRYPTION_KEY=${PB_ENCRYPTION_KEY}
+      - POCKETBASE_ADMIN_EMAIL=${POCKETBASE_ADMIN_EMAIL}
+      - POCKETBASE_ADMIN_PASSWORD=${POCKETBASE_ADMIN_PASSWORD}
     volumes:
       - ./pb_data:/pb_data
     ports:
@@ -78,8 +80,8 @@ services:
     environment:
       - POCKETBASE_URL=http://172.31.37.205:8090
       - API_KEY=${API_KEY}
-      - PB_USER_EMAIL=likweitan@gmail.com
-      - PB_USER_PASSWORD=test1234
+      - PB_USER_EMAIL=${POCKETBASE_ADMIN_EMAIL}
+      - PB_USER_PASSWORD=${POCKETBASE_ADMIN_PASSWORD}
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=XXXX
       - AWS_SECRET_ACCESS_KEY=XXXX
