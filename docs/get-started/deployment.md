@@ -44,6 +44,11 @@ services:
       - ./pb_data:/pb_data
     ports:
       - "8090:8090"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   admin-portal:
     image: ghcr.io/identivia/admin-portal:latest
@@ -54,7 +59,8 @@ services:
     environment:
       - POCKETBASE_URL=https://pocketbase.identivia.com
     depends_on:
-      - pocketbase
+      pocketbase:
+        condition: service_healthy
 
   web-app:
     image: ghcr.io/identivia/web-app:latest
@@ -68,8 +74,10 @@ services:
       - VITE_DEMO_SITE_URL=https://demo.identivia.com
       - VITE_DOMAIN_URL=identivia.com
     depends_on:
-      - pocketbase
-      - backend-api
+      pocketbase:
+        condition: service_healthy
+      backend-api:
+        condition: service_started
 
   backend-api:
     image: ghcr.io/identivia/backend-api:latest
@@ -91,7 +99,8 @@ services:
       - FINGERPRINT_SECRET_KEY=XXXX
       - CLIENT_URL=https://identivia.com
     depends_on:
-      - pocketbase
+      pocketbase:
+        condition: service_healthy
 ```
 
 ## Configuration
