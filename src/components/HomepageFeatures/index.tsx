@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react';
+import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import Link from '@docusaurus/Link';
@@ -46,7 +46,7 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, Svg, description }: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
@@ -71,8 +71,8 @@ export default function HomepageFeatures(): ReactNode {
         </div>
         <div className="row">
           <div className="col col--12 text--center margin-top--lg">
-            <Link className="button button--primary" to="/docs/getting-started">
-              Explore the API Guide
+            <Link className="button button--primary" to="/docs/get-started">
+              Explore the Docs
             </Link>
           </div>
         </div>

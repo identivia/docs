@@ -20,8 +20,8 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/">
-            Docusaurus Tutorial - 5min ⏱️
+            to="/docs/get-started">
+            Get Started
           </Link>
         </div>
       </div>
@@ -33,8 +33,8 @@ export default function Home(): ReactNode {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title={`${siteConfig.title} - Documentation`}
+      description="Identivia KYC documentation - Deploy, configure, and integrate identity verification">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

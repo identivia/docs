@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Get Started
+# Quick Start
 
 Welcome to the Getting Started guide. Here you'll find everything you need to set up Identivia.
 
