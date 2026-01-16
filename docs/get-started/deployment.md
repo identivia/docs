@@ -17,17 +17,34 @@ Create a `docker-compose.yml` file with the following content:
 
 ```yaml
 services:
-  nginx-proxy-manager:
-    image: jc21/nginx-proxy-manager:latest
-    container_name: nginx-proxy-manager
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
     restart: unless-stopped
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
     ports:
       - "80:80"
-      - "81:81"
       - "443:443"
+      - "8080:8080"
     volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN}`)
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.entrypoints=websecure
+      - traefik.http.routers.dashboard.tls.certresolver=letsencrypt
 
   pocketbase:
     image: ghcr.io/muchobien/pocketbase
@@ -42,32 +59,38 @@ services:
       - POCKETBASE_ADMIN_PASSWORD=${POCKETBASE_ADMIN_PASSWORD}
     volumes:
       - ./pb_data:/pb_data
-    ports:
-      - "8090:8090"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
       interval: 5s
       timeout: 5s
       retries: 5
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pocketbase.rule=Host(`pocketbase.${DOMAIN}`)
+      - traefik.http.routers.pocketbase.entrypoints=websecure
+      - traefik.http.routers.pocketbase.tls.certresolver=letsencrypt
+      - traefik.http.services.pocketbase.loadbalancer.server.port=8090
 
   admin-portal:
     image: ghcr.io/identivia/admin-portal:latest
     container_name: admin-portal
     restart: unless-stopped
-    ports:
-      - "3000:80"
     environment:
       - POCKETBASE_URL=${POCKETBASE_PUBLIC_URL}
     depends_on:
       pocketbase:
         condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.admin-portal.rule=Host(`admin.${DOMAIN}`)
+      - traefik.http.routers.admin-portal.entrypoints=websecure
+      - traefik.http.routers.admin-portal.tls.certresolver=letsencrypt
+      - traefik.http.services.admin-portal.loadbalancer.server.port=80
 
   web-app:
     image: ghcr.io/identivia/web-app:latest
     container_name: web-app
     restart: unless-stopped
-    ports:
-      - "3001:80"
     environment:
       - VITE_FINGERPRINT_PUBLIC_KEY=${VITE_FINGERPRINT_PUBLIC_KEY}
       - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
@@ -78,13 +101,17 @@ services:
         condition: service_healthy
       backend-api:
         condition: service_started
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web-app.rule=Host(`app.${DOMAIN}`)
+      - traefik.http.routers.web-app.entrypoints=websecure
+      - traefik.http.routers.web-app.tls.certresolver=letsencrypt
+      - traefik.http.services.web-app.loadbalancer.server.port=80
 
   backend-api:
     image: ghcr.io/identivia/backend-api:latest
     container_name: backend-api
     restart: unless-stopped
-    ports:
-      - "8000:8000"
     environment:
       - POCKETBASE_URL=${POCKETBASE_INTERNAL_URL}
       - API_KEY=${API_KEY}
@@ -101,6 +128,12 @@ services:
     depends_on:
       pocketbase:
         condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend-api.rule=Host(`api.${DOMAIN}`)
+      - traefik.http.routers.backend-api.entrypoints=websecure
+      - traefik.http.routers.backend-api.tls.certresolver=letsencrypt
+      - traefik.http.services.backend-api.loadbalancer.server.port=8000
 ```
 
 ## Configuration
@@ -108,6 +141,10 @@ services:
 Create a `.env` file in the same directory as your `docker-compose.yml` and add your environment variables:
 
 ```bash
+# Traefik
+DOMAIN=identivia.com
+ACME_EMAIL=admin@identivia.com
+
 # PocketBase
 PB_ENCRYPTION_KEY=your_secret_encryption_key
 POCKETBASE_ADMIN_EMAIL=admin@example.com
@@ -123,7 +160,7 @@ VITE_DEMO_SITE_URL=https://demo.identivia.com
 VITE_DOMAIN_URL=identivia.com
 
 # Backend API
-POCKETBASE_INTERNAL_URL=http://172.31.37.205:8090
+POCKETBASE_INTERNAL_URL=http://pocketbase:8090
 API_KEY=your_secret_api_key
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=your_aws_access_key
@@ -137,7 +174,7 @@ CLIENT_URL=https://identivia.com
 
 ### Service Details
 
-- **Nginx Proxy Manager**: Handles reverse proxying and SSL termination. Accessible at port `81` for administration.
+- **Traefik**: Modern reverse proxy and load balancer with automatic SSL via Let's Encrypt. Dashboard accessible at port `8080`.
 - **PocketBase**: The backend database and authentication provider.
 - **Admin Portal**: Interface for managing the Identivia system.
 - **Web App**: The main user-facing application.
@@ -177,42 +214,40 @@ Check the logs to ensure everything started correctly:
 docker-compose logs -f
 ```
 
-## Configuring Nginx Proxy Manager
+## Configuring Traefik
 
-After the stack is running, you need to configure Nginx Proxy Manager to route traffic to the correct services.
+Unlike traditional reverse proxies, Traefik uses Docker labels for automatic service discovery and routing. The configuration is already defined in the `docker-compose.yml` file through labels on each service.
 
-![Nginx Proxy Manager Screenshot](/img/nginx-proxy-manager.png)
+### How Traefik Works
 
-1.  **Access the Admin Interface**: Open your browser and navigate to `http://localhost:81`.
-2.  **Login**: Use the default credentials:
-    *   **Email**: `admin@example.com`
-    *   **Password**: `changeme`
-    *   *Note: You will be prompted to change these details after your first login.*
-3.  **Add Proxy Hosts**: Go to the "Proxy Hosts" tab and click "Add Proxy Host".
+Traefik automatically detects services through Docker labels:
 
-### 1. Configure PocketBase
+- `traefik.enable=true` - Enables Traefik for this service
+- `traefik.http.routers.<name>.rule=Host(...)` - Defines the domain routing rule
+- `traefik.http.routers.<name>.entrypoints=websecure` - Uses HTTPS entrypoint
+- `traefik.http.routers.<name>.tls.certresolver=letsencrypt` - Enables automatic SSL
+- `traefik.http.services.<name>.loadbalancer.server.port=<port>` - Specifies the container port
 
-*   **Domain Names**: `pocketbase.example.com` (or your local domain)
-*   **Scheme**: `http`
-*   **Forward Hostname / IP**: `pocketbase`
-*   **Forward Port**: `8090`
-*   **Websockets Support**: Enable this option (Required for PocketBase realtime subscriptions).
-*   **Block Common Exploits**: Enable this option.
+### Accessing the Dashboard
 
-### 2. Configure Admin Portal
+1.  **Access the Traefik Dashboard**: Open your browser and navigate to `http://localhost:8080`.
+2.  The dashboard shows all detected services, routers, and their health status.
+3.  No additional configuration is needed - services are automatically registered.
 
-*   **Domain Names**: `admin.example.com` (or your local domain)
-*   **Scheme**: `http`
-*   **Forward Hostname / IP**: `admin-portal`
-*   **Forward Port**: `80`
-*   **Block Common Exploits**: Enable this option.
+### Default Routes
 
-### 3. Configure Web App
+With the provided configuration, the following routes are automatically configured:
 
-*   **Domain Names**: `app.example.com` (or your local domain)
-*   **Scheme**: `http`
-*   **Forward Hostname / IP**: `web-app`
-*   **Forward Port**: `80`
-*   **Block Common Exploits**: Enable this option.
+| Service | Domain | Description |
+|---------|--------|-------------|
+| PocketBase | `pocketbase.${DOMAIN}` | Backend database and auth |
+| Admin Portal | `admin.${DOMAIN}` | Admin interface |
+| Web App | `app.${DOMAIN}` | Main user application |
+| Backend API | `api.${DOMAIN}` | API service |
+| Traefik Dashboard | `traefik.${DOMAIN}` | Traefik admin dashboard |
 
-> **Note**: Replace `.example.com` domains with your actual domain names or local hosts mapped in your `/etc/hosts` file.
+### SSL Certificates
+
+Traefik automatically obtains and renews SSL certificates from Let's Encrypt. Certificates are stored in `./letsencrypt/acme.json`.
+
+> **Note**: Replace `${DOMAIN}` with your actual domain (e.g., `identivia.com`) in the `.env` file. Ensure your DNS records point to your server.
