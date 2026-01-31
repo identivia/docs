@@ -76,6 +76,7 @@ services:
       - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
       - VITE_DEMO_SITE_URL=${VITE_DEMO_SITE_URL}
       - VITE_DOMAIN_URL=${VITE_DOMAIN_URL}
+      - VITE_API_KEY=${VITE_API_KEY}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -148,6 +149,12 @@ Fingerprint is used for device identification and fraud prevention.
 2. Navigate to **App Settings** > **API Keys**.
 3. Copy your **Public API Key** (for the frontend) and **Secret API Key** (for the backend).
 
+#### Identivia API Key
+
+The `VITE_API_KEY` is required for the web application to communicate with the backend.
+
+To obtain your API key, contact **[support@identivia.com](mailto:support@identivia.com)**.
+
 ---
 
 ### 4. Configure Environment Variables
@@ -173,6 +180,7 @@ VITE_FINGERPRINT_PUBLIC_KEY=your_fingerprint_public_key
 VITE_BACKEND_API_URL=https://api.yourdomain.com
 VITE_DEMO_SITE_URL=https://demo.yourdomain.com
 VITE_DOMAIN_URL=yourdomain.com
+VITE_API_KEY=your_api_key_from_identivia
 
 # Backend API
 POCKETBASE_INTERNAL_URL=http://pocketbase:8090

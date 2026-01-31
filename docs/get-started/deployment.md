@@ -96,6 +96,7 @@ services:
       - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
       - VITE_DEMO_SITE_URL=${VITE_DEMO_SITE_URL}
       - VITE_DOMAIN_URL=${VITE_DOMAIN_URL}
+      - VITE_API_KEY=${VITE_API_KEY}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -158,6 +159,7 @@ VITE_FINGERPRINT_PUBLIC_KEY=your_fingerprint_public_key
 VITE_BACKEND_API_URL=https://api.identivia.com
 VITE_DEMO_SITE_URL=https://demo.identivia.com
 VITE_DOMAIN_URL=identivia.com
+VITE_API_KEY=your_api_key_from_identivia
 
 # Backend API
 POCKETBASE_INTERNAL_URL=http://pocketbase:8090
