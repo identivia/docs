@@ -19,7 +19,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Get Started",
-      items: ["get-started/index", "get-started/deployment"],
+      items: ["get-started/index", "get-started/deployment", "get-started/coolify"],
     },
     {
       type: "category",
