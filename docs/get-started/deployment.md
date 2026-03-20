@@ -178,6 +178,23 @@ CLIENT_URL=https://app.identivia.com
 - **Web App**: The main user-facing application. Runtime environment variables are injected via a docker entrypoint script.
 - **Backend API**: Internal API service for handling business logic, including AWS Rekognition face liveness, OpenAI document analysis, and Fingerprint device identification.
 
+### PocketBase Superuser
+
+Once PocketBase is running, the default superuser credentials are:
+
+| Field | Default Value |
+|-------|---------------|
+| Email | `admin@identivia.com` |
+| Password | `admin1234` |
+
+You can access the PocketBase admin dashboard at `https://pocketbase.${DOMAIN}/_/` to manage collections, users, and settings.
+
+:::warning
+
+Change the default superuser credentials immediately after your first login. Update `POCKETBASE_ADMIN_EMAIL` and `POCKETBASE_ADMIN_PASSWORD` in your `.env` file and restart the stack.
+
+:::
+
 ## Authenticating to the Container registry
 
 :::note
