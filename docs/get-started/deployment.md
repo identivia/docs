@@ -76,7 +76,7 @@ services:
     container_name: admin-portal
     restart: unless-stopped
     environment:
-      - POCKETBASE_URL=${POCKETBASE_PUBLIC_URL}
+      - POCKETBASE_PROXY_URL=${POCKETBASE_PUBLIC_URL}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -94,7 +94,6 @@ services:
     environment:
       - VITE_FINGERPRINT_PUBLIC_KEY=${VITE_FINGERPRINT_PUBLIC_KEY}
       - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
-      - VITE_DEMO_SITE_URL=${VITE_DEMO_SITE_URL}
       - VITE_DOMAIN_URL=${VITE_DOMAIN_URL}
       - VITE_API_KEY=${VITE_API_KEY}
     depends_on:
@@ -115,7 +114,6 @@ services:
     restart: unless-stopped
     environment:
       - POCKETBASE_URL=${POCKETBASE_INTERNAL_URL}
-      - API_KEY=${API_KEY}
       - PB_USER_EMAIL=${POCKETBASE_ADMIN_EMAIL}
       - PB_USER_PASSWORD=${POCKETBASE_ADMIN_PASSWORD}
       - AWS_REGION=${AWS_REGION}
@@ -134,7 +132,7 @@ services:
       - traefik.http.routers.backend-api.rule=Host(`api.${DOMAIN}`)
       - traefik.http.routers.backend-api.entrypoints=websecure
       - traefik.http.routers.backend-api.tls.certresolver=letsencrypt
-      - traefik.http.services.backend-api.loadbalancer.server.port=8000
+      - traefik.http.services.backend-api.loadbalancer.server.port=3000
 ```
 
 ## Configuration
@@ -157,13 +155,11 @@ POCKETBASE_PUBLIC_URL=https://pocketbase.identivia.com
 # Web App
 VITE_FINGERPRINT_PUBLIC_KEY=your_fingerprint_public_key
 VITE_BACKEND_API_URL=https://api.identivia.com
-VITE_DEMO_SITE_URL=https://demo.identivia.com
 VITE_DOMAIN_URL=identivia.com
 VITE_API_KEY=your_api_key_from_identivia
 
 # Backend API
 POCKETBASE_INTERNAL_URL=http://pocketbase:8090
-API_KEY=your_secret_api_key
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
@@ -171,16 +167,16 @@ FACE_LIVENESS_THRESHOLD=75
 OPENAI_MODEL=o4-mini
 OPENAI_API_KEY=your_openai_api_key
 FINGERPRINT_SECRET_KEY=your_fingerprint_secret_key
-CLIENT_URL=https://identivia.com
+CLIENT_URL=https://app.identivia.com
 ```
 
 ### Service Details
 
 - **Traefik**: Modern reverse proxy and load balancer with automatic SSL via Let's Encrypt. Dashboard accessible at port `8080`.
 - **PocketBase**: The backend database and authentication provider.
-- **Admin Portal**: Interface for managing the Identivia system.
-- **Web App**: The main user-facing application.
-- **Backend API**: Internal API service for handling business logic.
+- **Admin Portal**: Interface for managing the Identivia system. Uses an nginx reverse proxy to forward PocketBase API requests via `POCKETBASE_PROXY_URL`.
+- **Web App**: The main user-facing application. Runtime environment variables are injected via a docker entrypoint script.
+- **Backend API**: Internal API service for handling business logic, including AWS Rekognition face liveness, OpenAI document analysis, and Fingerprint device identification.
 
 ## Authenticating to the Container registry
 

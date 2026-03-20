@@ -56,7 +56,7 @@ services:
     container_name: admin-portal
     restart: unless-stopped
     environment:
-      - POCKETBASE_URL=${POCKETBASE_PUBLIC_URL}
+      - POCKETBASE_PROXY_URL=${POCKETBASE_PUBLIC_URL}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -74,7 +74,6 @@ services:
     environment:
       - VITE_FINGERPRINT_PUBLIC_KEY=${VITE_FINGERPRINT_PUBLIC_KEY}
       - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
-      - VITE_DEMO_SITE_URL=${VITE_DEMO_SITE_URL}
       - VITE_DOMAIN_URL=${VITE_DOMAIN_URL}
       - VITE_API_KEY=${VITE_API_KEY}
     depends_on:
@@ -95,7 +94,6 @@ services:
     restart: unless-stopped
     environment:
       - POCKETBASE_URL=${POCKETBASE_INTERNAL_URL}
-      - API_KEY=${API_KEY}
       - PB_USER_EMAIL=${POCKETBASE_ADMIN_EMAIL}
       - PB_USER_PASSWORD=${POCKETBASE_ADMIN_PASSWORD}
       - AWS_REGION=${AWS_REGION}
@@ -114,7 +112,7 @@ services:
       - traefik.http.routers.backend-api.rule=Host(`api.${DOMAIN}`)
       - traefik.http.routers.backend-api.entrypoints=websecure
       - traefik.http.routers.backend-api.tls.certresolver=letsencrypt
-      - traefik.http.services.backend-api.loadbalancer.server.port=8000
+      - traefik.http.services.backend-api.loadbalancer.server.port=3000
 ```
 
 ### 3. Obtain API Keys
@@ -178,13 +176,11 @@ POCKETBASE_PUBLIC_URL=https://pocketbase.yourdomain.com
 # Web App
 VITE_FINGERPRINT_PUBLIC_KEY=your_fingerprint_public_key
 VITE_BACKEND_API_URL=https://api.yourdomain.com
-VITE_DEMO_SITE_URL=https://demo.yourdomain.com
 VITE_DOMAIN_URL=yourdomain.com
 VITE_API_KEY=your_api_key_from_identivia
 
 # Backend API
 POCKETBASE_INTERNAL_URL=http://pocketbase:8090
-API_KEY=your_secret_api_key
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
@@ -192,7 +188,7 @@ FACE_LIVENESS_THRESHOLD=75
 OPENAI_MODEL=o4-mini
 OPENAI_API_KEY=your_openai_api_key
 FINGERPRINT_SECRET_KEY=your_fingerprint_secret_key
-CLIENT_URL=https://yourdomain.com
+CLIENT_URL=https://app.yourdomain.com
 ```
 
 ### 5. Deploy
